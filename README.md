@@ -1,6 +1,8 @@
 # ActiverecordAnyOf
 
-This method is inspired by [any_of from mongoid](http://two.mongoid.org/docs/querying/criteria.html#any_of).
+This gem provides `#any_of` and `#none_of` on ActiveRecord.
+
+`#any_of` is inspired by [any_of from mongoid](http://two.mongoid.org/docs/querying/criteria.html#any_of).
 
 It allows to compute an `OR` like query that leverages AR's `#where` syntax:
 
@@ -23,6 +25,14 @@ Its main purpose is to both :
 
 * remove the need to write a sql string when we want an `OR`
 * allows to write dynamic `OR` queries, which would be a pain with a string
+
+`#none_of` is the negative version of `#any_of`. This will return all active users :
+
+```ruby
+banned_users = User.where(banned: true)
+unconfirmed_users = User.where("confirmed_at IS NULL")
+active_users = User.none_of(banned_users, unconfirmed_users)
+```
 
 
 ## Installation

@@ -1,5 +1,4 @@
 require 'test_helper'
-require 'pry-debugger'
 
 class ActiverecordAnyOfTest < ActiveSupport::TestCase
   fixtures :authors, :posts
@@ -26,7 +25,7 @@ class ActiverecordAnyOfTest < ActiveSupport::TestCase
     assert_equal expected, david.posts.any_of(welcome, {type: 'SpecialPost'}).map(&:title)
   end
 
-  def test_finding_alternate_dynamically_with_joined_queries
+  test 'finding alternate dynamically with joined queries' do
     david = Author.where(posts: { title: 'Welcome to the weblog' }).joins(:posts)
     mary = Author.where(posts: { title: "eager loading with OR'd conditions" }).joins(:posts)
 
@@ -41,5 +40,16 @@ class ActiverecordAnyOfTest < ActiveSupport::TestCase
     end
 
     assert_equal ['David', 'Mary'], Author.any_of(david, mary).map(&:name)
+  end
+
+  test 'finding with alternate negative conditions' do
+    assert_equal ['Bob'], Author.none_of({name: 'David'}, {name: 'Mary'}).map(&:name)
+  end
+
+  test 'finding with alternate negative conditions on association' do
+    david = Author.where(name: 'David').first
+    welcome = david.posts.where(body: 'Such a lovely day')
+    expected = ['sti comments', 'sti me', 'habtm sti test']
+    assert_equal expected, david.posts.none_of(welcome, {type: 'SpecialPost'}).map(&:title)
   end
 end
