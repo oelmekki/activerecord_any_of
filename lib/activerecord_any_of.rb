@@ -21,21 +21,35 @@ module ActiverecordAnyOf
   #    unconfirmed_users = User.where("confirmed_at IS NULL")
   #    unactive_users = User.any_of(banned_users, unconfirmed_users)
   def any_of(*queries)
-    queries_bind_values = []
+    queries_bind_values, queries_joins_values = [], { includes: [],  joins: [], references: [] }
+
     queries = queries.map do |query|
       query = where(query) if [String, Hash].any? { |type| query.kind_of?(type) }
       query = where(*query) if query.kind_of?(Array)
       queries_bind_values += query.bind_values if query.bind_values.any?
+      queries_joins_values[:includes] += query.includes_values if query.includes_values.any?
+      queries_joins_values[:joins] += query.joins_values if query.joins_values.any?
+      queries_joins_values[:references] += query.references_values if Rails.version >= '4' and query.references_values.any?
       query.arel.constraints.reduce(:and)
     end
 
+
+    queries_joins_values.each { |tables| tables.uniq! }
+
     if ActiveRecord::Base.connection.supports_statement_cache?
-      where([queries.reduce(:or).to_sql, *queries_bind_values.map { |v| v[1] }])
+      relation = where([queries.reduce(:or).to_sql, *queries_bind_values.map { |v| v[1] }])
+      relation = relation.includes(queries_joins_values[:includes])
+      relation = relation.joins(queries_joins_values[:joins])
+      relation = relation.references(queries_joins_values[:references]) if Rails.version >= '4'
     else
       relation = where(queries.reduce(:or))
       relation.bind_values += queries_bind_values
-      relation
+      relation.includes_values += queries_joins_values[:includes]
+      relation.joins_values += queries_joins_values[:joins]
+      relation.references_values += queries_joins_values[:references] if Rails.version >= '4'
     end
+
+    relation
   end
 end
 
