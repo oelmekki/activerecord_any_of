@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    activerecord_any_of (0.0.1)
+    activerecord_any_of (1.0.0)
       rails (>= 3.2.13, < 5)
 
 GEM
