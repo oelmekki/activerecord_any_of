@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'pry-debugger'
 
 class ActiverecordAnyOfTest < ActiveSupport::TestCase
   fixtures :authors, :posts
@@ -23,5 +24,22 @@ class ActiverecordAnyOfTest < ActiveSupport::TestCase
     welcome = david.posts.where(body: 'Such a lovely day')
     expected = ['Welcome to the weblog', 'So I was thinking']
     assert_equal expected, david.posts.any_of(welcome, {type: 'SpecialPost'}).map(&:title)
+  end
+
+  def test_finding_alternate_dynamically_with_joined_queries
+    david = Author.where(posts: { title: 'Welcome to the weblog' }).joins(:posts)
+    mary = Author.where(posts: { title: "eager loading with OR'd conditions" }).joins(:posts)
+
+    assert_equal ['David', 'Mary'], Author.any_of(david, mary).map(&:name)
+
+    if Rails.version >= '4'
+      david = Author.where(posts: { title: 'Welcome to the weblog' }).includes(:posts).references(:posts)
+      mary = Author.where(posts: { title: "eager loading with OR'd conditions" }).includes(:posts).references(:posts)
+    else
+      david = Author.where(posts: { title: 'Welcome to the weblog' }).includes(:posts)
+      mary = Author.where(posts: { title: "eager loading with OR'd conditions" }).includes(:posts)
+    end
+
+    assert_equal ['David', 'Mary'], Author.any_of(david, mary).map(&:name)
   end
 end
