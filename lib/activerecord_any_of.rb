@@ -23,6 +23,7 @@ module ActiverecordAnyOf
   #    unconfirmed_users = User.where("confirmed_at IS NULL")
   #    unactive_users = User.any_of(banned_users, unconfirmed_users)
   def any_of(*queries)
+    raise ArgumentError, 'Called any_of() with no arguments.' if queries.none?
     AlternativeBuilder.new(:positive, self, *queries).build
   end
 
@@ -35,6 +36,7 @@ module ActiverecordAnyOf
   #    unconfirmed_users = User.where("confirmed_at IS NULL")
   #    active_users = User.none_of(banned_users, unconfirmed_users)
   def none_of(*queries)
+    raise ArgumentError, 'Called none_of() with no arguments.' if queries.none?
     AlternativeBuilder.new(:negative, self, *queries).build
   end
 end

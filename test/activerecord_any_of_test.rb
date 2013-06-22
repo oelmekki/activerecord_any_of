@@ -52,4 +52,12 @@ class ActiverecordAnyOfTest < ActiveSupport::TestCase
     expected = ['sti comments', 'sti me', 'habtm sti test']
     assert_equal expected, david.posts.none_of(welcome, {type: 'SpecialPost'}).map(&:title)
   end
+
+  test 'calling #any_of with no argument raise exception' do
+    assert_raise(ArgumentError) { Author.any_of }
+  end
+
+  test 'calling #none_of with no argument raise exception' do
+    assert_raise(ArgumentError) { Author.none_of }
+  end
 end
