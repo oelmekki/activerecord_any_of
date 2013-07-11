@@ -24,12 +24,16 @@ module ActiverecordAnyOf
 
         def queries
           @queries ||= @source_queries.map do |query|
-            query = where(query) if [String, Hash].any? { |type| query.kind_of?(type) }
-            query = where(*query) if query.kind_of?(Array)
+            if String === query || Hash === query
+              query = where(query)
+            elsif Array === query
+              query = where(*query)
+            end
+
             self.queries_bind_values += query.bind_values if query.bind_values.any?
-            queries_joins_values[:includes] += query.includes_values if query.includes_values.any?
-            queries_joins_values[:joins] += query.joins_values if query.joins_values.any?
-            queries_joins_values[:references] += query.references_values if Rails.version >= '4' && query.references_values.any?
+            queries_joins_values[:includes].concat(query.includes_values) if query.includes_values.any?
+            queries_joins_values[:joins].concat(query.joins_values) if query.joins_values.any?
+            queries_joins_values[:references].concat(query.references_values) if Rails.version >= '4' && query.references_values.any?
             query.arel.constraints.reduce(:and)
           end
         end
@@ -42,17 +46,17 @@ module ActiverecordAnyOf
           @context.send(method_name, *args, &block)
         end
 
-        def add_joins_to( relation )
+        def add_joins_to(relation)
           relation = relation.references(uniq_queries_joins_values[:references]) if Rails.version >= '4'
           relation = relation.includes(uniq_queries_joins_values[:includes])
           relation.joins(uniq_queries_joins_values[:joins])
         end
 
-        def add_related_values_to( relation )
-          relation.bind_values += queries_bind_values
-          relation.includes_values += uniq_queries_joins_values[:includes]
-          relation.joins_values += uniq_queries_joins_values[:joins]
-          relation.references_values += uniq_queries_joins_values[:references] if Rails.version >= '4'
+        def add_related_values_to(relation)
+          relation.bind_values.concat(queries_bind_values)
+          relation.includes_values.concat(uniq_queries_joins_values[:includes])
+          relation.joins_values.concat(uniq_queries_joins_values[:joins])
+          relation.references_values.concat(uniq_queries_joins_values[:references]) if Rails.version >= '4'
 
           relation
         end

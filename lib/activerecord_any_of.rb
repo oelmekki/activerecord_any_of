@@ -1,7 +1,7 @@
 require 'activerecord_any_of/alternative_builder'
 
 module ActiverecordAnyOf
-  # Returns a new relation, which includes results matching any of conditions
+  # Returns a new relation, which includes results matching any of the conditions
   # passed as parameters. You can think of it as a sql <tt>OR</tt> implementation.
   #
   # Each #any_of parameter is the same set you would have passed to #where :
@@ -21,13 +21,13 @@ module ActiverecordAnyOf
   #
   #    banned_users = User.where(banned: true)
   #    unconfirmed_users = User.where("confirmed_at IS NULL")
-  #    unactive_users = User.any_of(banned_users, unconfirmed_users)
+  #    inactive_users = User.any_of(banned_users, unconfirmed_users)
   def any_of(*queries)
     raise ArgumentError, 'Called any_of() with no arguments.' if queries.none?
     AlternativeBuilder.new(:positive, self, *queries).build
   end
 
-  # Returns a new relation, which includes results not matching any of conditions
+  # Returns a new relation, which includes results not matching any of the conditions
   # passed as parameters. It's the negative version of <tt>#any_of</tt>.
   #
   # This will return all active users :
