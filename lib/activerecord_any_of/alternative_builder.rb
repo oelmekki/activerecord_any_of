@@ -53,10 +53,10 @@ module ActiverecordAnyOf
         end
 
         def add_related_values_to(relation)
-          relation.bind_values.concat(queries_bind_values)
-          relation.includes_values.concat(uniq_queries_joins_values[:includes])
-          relation.joins_values.concat(uniq_queries_joins_values[:joins])
-          relation.references_values.concat(uniq_queries_joins_values[:references]) if Rails.version >= '4'
+          relation.bind_values += queries_bind_values
+          relation.includes_values += uniq_queries_joins_values[:includes]
+          relation.joins_values += uniq_queries_joins_values[:joins]
+          relation.references_values += uniq_queries_joins_values[:references] if Rails.version >= '4'
 
           relation
         end
