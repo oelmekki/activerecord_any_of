@@ -60,4 +60,8 @@ class ActiverecordAnyOfTest < ActiveSupport::TestCase
   test 'calling #none_of with no argument raise exception' do
     assert_raise(ArgumentError) { Author.none_of }
   end
+
+  test 'calling #any_of after a wildcard query works' do
+    assert_equal ['David'], Author.where("name like '%av%'").any_of({name: 'David'}, {name: 'Mary'}).map(&:name)
+  end
 end
