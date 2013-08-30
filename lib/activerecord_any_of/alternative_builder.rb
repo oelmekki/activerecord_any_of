@@ -66,7 +66,7 @@ module ActiverecordAnyOf
       private
 
         def with_statement_cache
-          if queries_bind_values.any?
+          if queries && queries_bind_values.any?
             relation = where([queries.reduce(:or).to_sql, *queries_bind_values.map { |v| v[1] }])
           else
             relation = where(queries.reduce(:or).to_sql)
@@ -86,13 +86,13 @@ module ActiverecordAnyOf
 
         def with_statement_cache
           if Rails.version >= '4'
-            if queries_bind_values.any?
+            if queries && queries_bind_values.any?
               relation = where.not([queries.reduce(:or).to_sql, *queries_bind_values.map { |v| v[1] }])
             else
               relation = where.not(queries.reduce(:or).to_sql)
             end
           else
-            if queries_bind_values.any?
+            if queries && queries_bind_values.any?
               relation = where([Arel::Nodes::Not.new(queries.reduce(:or)).to_sql, *queries_bind_values.map { |v| v[1] }])
             else
               relation = where(Arel::Nodes::Not.new(queries.reduce(:or)).to_sql)
