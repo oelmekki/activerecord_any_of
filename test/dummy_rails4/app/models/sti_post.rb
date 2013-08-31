@@ -1,0 +1,2 @@
+class StiPost < Post
+end

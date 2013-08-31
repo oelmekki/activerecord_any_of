@@ -53,9 +53,12 @@ pass for rails < 3.2.13, I may edit gem dependencies).
 User.where( "email LIKE '%@example.com" ).where( active: true ).or( offline: true )
 ```
 
-What does this query do ? `where (email LIKE '%@example.com' AND active = '1' ) OR offline = '1'` ? Or `where email LIKE '%@example.com' AND ( active = '1' OR offline = '1' )` ? This can quickly get messy and counter intuitive.
+What does this query do ? `where (email LIKE '%@example.com' AND active = '1' )
+OR offline = '1'` ? Or `where email LIKE '%@example.com' AND ( active = '1' OR
+offline = '1' )` ? This can quickly get messy and counter intuitive.
 
-The MongoId solution is quite elegant. Using `#any_of`, it is made clear which conditions are grouped through `OR` and which are grouped through `AND` : 
+The MongoId solution is quite elegant. Using `#any_of`, it is made clear which
+conditions are grouped through `OR` and which are grouped through `AND` : 
 
 * `User.where( "email LIKE '%@example.com" ).any_of({ active: true }, { offline: true })`
 * `fakes = User.where( "email LIKE '%@example.com'" ).where( active: true ); User.any_of( fakes, { offline: true })` 
@@ -68,14 +71,36 @@ You can [say it there](https://github.com/rails/rails/pull/10891).
 
 ## Running test
 
+Activerecord_any_of allows to run tests against both rails-3 and rails-4. You
+have to run them seperately, but it's ok to use the same directory / machine to
+run both.
+
+### Running tests with rails-4
+
 ```shell
 # One time setup
-cd test/dummy
-rake db:migrate
-rake db:test:prepare
+bundle install --gemfile Gemfile.rails4
+cd test/dummy_rails4
+BUNDLE_GEMFILE=../../Gemfile.rails4 bundle exec rake db:migrate
+BUNDLE_GEMFILE=../../Gemfile.rails4 bundle exec rake db:test:prepare
 cd ../..
+
 # Then
-rake test
+bundle exec rake test
+```
+
+### Running tests with rails-3
+
+```shell
+# One time setup
+bundle install --gemfile Gemfile.rails3
+cd test/dummy_rails3
+BUNDLE_GEMFILE=../../Gemfile.rails3 bundle exec rake db:migrate
+BUNDLE_GEMFILE=../../Gemfile.rails3 bundle exec rake db:test:prepare
+cd ../..
+
+# Then
+RAILS_VERSION=3 bundle exec rake test
 ```
 
 

@@ -1,4 +1,13 @@
 #!/usr/bin/env rake
+
+rails_version = ENV[ 'RAILS_VERSION' ] || '4'
+
+if rails_version == '3'
+  ENV[ 'BUNDLE_GEMFILE' ] = 'Gemfile.rails3'
+else
+  ENV[ 'BUNDLE_GEMFILE' ] = 'Gemfile.rails4'
+end
+
 begin
   require 'bundler/setup'
 rescue LoadError
