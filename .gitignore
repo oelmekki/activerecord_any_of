@@ -1,7 +1,7 @@
 .bundle/
 log/*.log
 pkg/
-test/dummy/db/*.sqlite3
-test/dummy/log/*.log
-test/dummy/tmp/
-test/dummy/.sass-cache
+test/dummy_rails?/db/*.sqlite3
+test/dummy_rails?/log/*.log
+test/dummy_rails?/tmp/
+test/dummy_rails?/.sass-cache
