@@ -7,18 +7,17 @@ This gem provides `#any_of` and `#none_of` on ActiveRecord.
 It allows to compute an `OR` like query that leverages AR's `#where` syntax:
 
 ```ruby
-users = User.any_of("email like '%@example.com'", {banned: true}).destroy_all
+users = User.where.any_of("email like '%@example.com'", {banned: true}).destroy_all
 # DELETE FROM users WHERE email LIKE '%@example.com' OR banned = '1';
 ```
 
-It can be used directly on model class, or through an association, or
-behind an other relation.
+It can be used anywhere `#where` is valid :
 
 ```ruby
 manual_removal = User.where(id: params[:users][:destroy_ids])
-User.any_of(manual_removal, "email like '%@example.com'", {banned: true})
-@company.users.any_of(manual_removal, "email like '%@example.com'", {banned: true})
-User.where(offline: false).any_of( manual_removal, "email like '%@example.com'", {banned: true})
+User.where.any_of(manual_removal, "email like '%@example.com'", {banned: true})
+@company.users.where.any_of(manual_removal, "email like '%@example.com'", {banned: true})
+User.where(offline: false).where.any_of( manual_removal, "email like '%@example.com'", {banned: true})
 ```
 
 Its main purpose is to both :
@@ -31,9 +30,20 @@ Its main purpose is to both :
 ```ruby
 banned_users = User.where(banned: true)
 unconfirmed_users = User.where("confirmed_at IS NULL")
-active_users = User.none_of(banned_users, unconfirmed_users)
+active_users = User.where.none_of(banned_users, unconfirmed_users)
 ```
 
+## Rails-3
+
+`activerecord_any_of` uses WhereChain, which has been introduced in rails-4. In
+rails-3, simply call `#any_of` and `#none_of` directly, without using `#where` :
+
+```ruby
+manual_removal = User.where(id: params[:users][:destroy_ids])
+User.any_of(manual_removal, "email like '%@example.com'", {banned: true})
+@company.users.any_of(manual_removal, "email like '%@example.com'", {banned: true})
+User.where(offline: false).any_of( manual_removal, "email like '%@example.com'", {banned: true})
+```
 
 ## Installation
 
