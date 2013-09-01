@@ -1,5 +1,26 @@
 # ActiverecordAnyOf
 
+## A note for < 1.1 users
+
+You may have noted previous syntax has been deprecated for rails-4. `#any_of`
+and `#none_of` has now to be chained with `#where` :
+
+```ruby
+User.where.any_of({ banned: true }, { confirmed_at: nil })
+```
+
+This is due to current discussions in rails core PR, to reflect the fact that any_of only merges conditions while computing dynamic queries :
+
+```ruby
+grouped = User.where( first_name: 'John' ).group( :first_name )
+User.where.any_of( grouped, { active: true })
+```
+
+Here, group instruction from first query won't be reused in `#any_of` : this is only about merging conditions (even though `#includes` and `#references` are merged as well).
+
+
+## Introduction
+
 This gem provides `#any_of` and `#none_of` on ActiveRecord.
 
 `#any_of` is inspired by [any_of from mongoid](http://two.mongoid.org/docs/querying/criteria.html#any_of).
