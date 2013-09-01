@@ -12,7 +12,7 @@ User.where.any_of({ banned: true }, { confirmed_at: nil })
 This is due to current discussions in rails core PR, to reflect the fact that any_of only merges conditions while computing dynamic queries :
 
 ```ruby
-grouped = User.where( first_name: 'John' ).group( :first_name )
+grouped = User.where( first_name: 'John' ).group( :last_name )
 User.where.any_of( grouped, { active: true })
 ```
 
