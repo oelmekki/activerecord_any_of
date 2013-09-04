@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/oelmekki/activerecord_any_of"
   s.summary     = "Mongoid's any_of like implementation for activerecord"
   s.description = "Any_of allows to compute dynamic OR queries."
+  s.license     = 'MIT'
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["test/**/*"]
