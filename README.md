@@ -100,6 +100,42 @@ conditions are grouped through `OR` and which are grouped through `AND` :
 You can [say it there](https://github.com/rails/rails/pull/10891).
 
 
+## Troubleshooting
+
+### `Any_of` produces an AND query rather than an OR
+
+A few people has been tricked by omitted curly bracket hash style for
+parameters. Each condition group passed to `#any_of` should be a Hash.
+
+If you do something like this :
+
+```ruby
+MyModel.where.any_of(foo: 'a', bar: 'b')
+```
+
+You actually do the same as this :
+
+```ruby
+MyModel.where.any_of({foo: 'a', bar: 'b'})
+```
+
+And there is a single hash there, so a single condition. This will produce :
+
+```
+SELECT * from my_models where foo = 'a' AND bar = 'b'
+```
+
+To have several conditions, you have to explicitly use curly brackets :
+
+```ruby
+MyModel.where.any_of({foo: 'a'}, {bar: 'b'})
+# SELECT * from my_models where foo = 'a' OR bar = 'b'
+```
+
+A warning will be added in future version to mention it when you pass only one
+parameter (a single has) to `#any_of`.
+
+
 ## Running test
 
 Activerecord_any_of allows to run tests against both rails-3 and rails-4. You
