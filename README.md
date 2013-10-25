@@ -132,8 +132,9 @@ MyModel.where.any_of({foo: 'a'}, {bar: 'b'})
 # SELECT * from my_models where foo = 'a' OR bar = 'b'
 ```
 
-A warning will be added in future version to mention it when you pass only one
-parameter (a single has) to `#any_of`.
+In next version, `#any_of` will do the work for you and simply split a single
+hash param into as many hashes as there are keys, so there won't be any
+surprise anymore.
 
 
 ## Running test
