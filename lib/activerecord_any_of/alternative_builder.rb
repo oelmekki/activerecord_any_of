@@ -1,6 +1,10 @@
 module ActiverecordAnyOf
   class AlternativeBuilder
     def initialize(match_type, context, *queries)
+      if Hash === queries.first and queries.count == 1
+        queries = queries.first.each_pair.map { |attr, predicate| Hash[attr, predicate] }
+      end
+
       @builder = match_type == :negative ? NegativeBuilder.new(context, *queries) : PositiveBuilder.new(context, *queries)
     end
 

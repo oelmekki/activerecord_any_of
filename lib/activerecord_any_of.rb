@@ -3,19 +3,32 @@ require 'activerecord_any_of/alternative_builder'
 module ActiverecordAnyOf
   module Chained
     # Returns a new relation, which includes results matching any of the conditions
-    # passed as parameters. You can think of it as a sql <tt>OR</tt> implementation.
+    # passed as parameters. You can think of it as a sql <tt>OR</tt> implementation :
     #
-    # Each #any_of parameter is the same set you would have passed to #where :
+    #    User.where.any_of(first_name: 'Joe', last_name: 'Joe')
+    #    # => SELECT * FROM users WHERE first_name = 'Joe' OR last_name = 'Joe'
     #
-    #    Client.any_of("orders_count = '2'", ["name = ?", 'Joe'], {email: 'joe@example.com'})
+    #
+    # You can separate sets of hash condition by explicitly group them as hashes :
+    #
+    #    User.where.any_of({first_name: 'John', last_name: 'Joe'}, {first_name: 'Simon', last_name: 'Joe'})
+    #    # => SELECT * FROM users WHERE ( first_name = 'John' AND last_name = 'Joe' ) OR ( first_name = 'Simon' AND last_name = 'Joe' )
+    #
+    #
+    # Each #any_of set is the same kind you would have passed to #where :
+    #
+    #    Client.where.any_of("orders_count = '2'", ["name = ?", 'Joe'], {email: 'joe@example.com'})
+    #
     #
     # You can as well pass #any_of to other relations :
     #
     #    Client.where("orders_count = '2'").any_of({ email: 'joe@example.com' }, { email: 'john@example.com' })
     #
+    #
     # And with associations :
     #
     #    User.find(1).posts.any_of({published: false}, "user_id IS NULL")
+    #
     #
     # The best part is that #any_of accepts other relations as parameter, to help compute
     # dynamic <tt>OR</tt> queries :

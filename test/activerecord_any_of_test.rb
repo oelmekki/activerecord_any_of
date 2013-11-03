@@ -100,6 +100,10 @@ class ActiverecordAnyOfTest < ActiveSupport::TestCase
     end
   end
 
+  test 'calling #any_of with a single Hash as parameter expands it' do
+    assert_equal ['David', 'Mary'], Author.where.any_of(name: 'David', id: 2).map(&:name)
+  end
+
   if Rails.version >= '4'
     test 'calling directly #any_of is deprecated in rails-4' do
       assert_deprecated do
