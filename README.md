@@ -54,11 +54,16 @@ Its main purpose is to both :
 
 It allows to compute an `OR` like query that leverages AR's `#where` syntax:
 
+
+#### basics
+
 ```ruby
 User.where.any_of(first_name: 'Joe', last_name: 'Joe')
 # => SELECT * FROM users WHERE first_name = 'Joe' OR last_name = 'Joe'
 ```
 
+
+#### grouped conditions
 
 You can separate sets of hash condition by explicitly group them as hashes :
 
@@ -68,12 +73,16 @@ User.where.any_of({first_name: 'John', last_name: 'Joe'}, {first_name: 'Simon', 
 ```
 
 
+#### it's plain #where syntax
+
 Each `#any_of` set is the same kind you would have passed to #where :
 
 ```ruby
 Client.where.any_of("orders_count = '2'", ["name = ?", 'Joe'], {email: 'joe@example.com'})
 ```
 
+
+#### with relations
 
 You can as well pass `#any_of` to other relations :
 
@@ -82,12 +91,16 @@ Client.where("orders_count = '2'").where.any_of({ email: 'joe@example.com' }, { 
 ```
 
 
+#### with associations
+
 And with associations :
 
 ```ruby
 User.find(1).posts.where.any_of({published: false}, "user_id IS NULL")
 ```
 
+
+#### dynamic OR queries
 
 The best part is that `#any_of` accepts other relations as parameter, to help compute
 dynamic `OR` queries :
