@@ -1,22 +1,39 @@
 # ActiverecordAnyOf
 
-## A note for < 1.1 users
+## A note for < 1.2 users
 
-You may have noted previous syntax has been deprecated for rails-4. `#any_of`
-and `#none_of` has now to be chained with `#where` :
-
-```ruby
-User.where.any_of({ banned: true }, { confirmed_at: nil })
-```
-
-This is due to current discussions in rails core PR, to reflect the fact that any_of only merges conditions while computing dynamic queries :
+There was a lot of confusion about explit/implicit hash parameter notation,
+with people expecting this to generate an OR query :
 
 ```ruby
-grouped = User.where( first_name: 'John' ).group( :last_name )
-User.where.any_of( grouped, { active: true })
+User.where.any_of(name: 'Doe', active: true)
 ```
 
-Here, group instruction from first query won't be reused in `#any_of` : this is only about merging conditions (even though `#includes` and `#references` are merged as well).
+This wouldn't work, since there is only one parameter, here : `{name: 'Doe', active: true}`,
+so there's a single group of condition that is joined as a AND. To achieve
+expected result, this should have been used :
+
+```ruby
+User.where.any_of({name: 'Doe'}, {active: true})
+```
+
+  
+To be true to principle of least surprise, we now automatically expand
+parameters consisting of a single Hash as a hash for each key, so first
+query will indeed generate :
+
+```ruby
+User.where.any_of(name: 'Doe', active: true)
+# => SELECT * FROM users WHERE name = 'Doe' OR active = '1'
+```
+
+
+Grouping conditions can still be achieved using explicit curly brackets :
+
+```ruby
+User.where.any_of({first_name: 'John', last_name: 'Doe'}, active: true)
+# => SELECT * FROM users WHERE (first_name = 'John' AND last_name = 'Doe') OR active = '1'
+```
 
 
 ## Introduction
@@ -25,26 +42,63 @@ This gem provides `#any_of` and `#none_of` on ActiveRecord.
 
 `#any_of` is inspired by [any_of from mongoid](http://two.mongoid.org/docs/querying/criteria.html#any_of).
 
-It allows to compute an `OR` like query that leverages AR's `#where` syntax:
-
-```ruby
-users = User.where.any_of("email like '%@example.com'", {banned: true}).destroy_all
-# DELETE FROM users WHERE email LIKE '%@example.com' OR banned = '1';
-```
-
-It can be used anywhere `#where` is valid :
-
-```ruby
-manual_removal = User.where(id: params[:users][:destroy_ids])
-User.where.any_of(manual_removal, "email like '%@example.com'", {banned: true})
-@company.users.where.any_of(manual_removal, "email like '%@example.com'", {banned: true})
-User.where(offline: false).where.any_of( manual_removal, "email like '%@example.com'", {banned: true})
-```
-
 Its main purpose is to both :
 
 * remove the need to write a sql string when we want an `OR`
 * allows to write dynamic `OR` queries, which would be a pain with a string
+
+
+## Usage
+
+### `#any_of`
+
+It allows to compute an `OR` like query that leverages AR's `#where` syntax:
+
+```ruby
+User.where.any_of(first_name: 'Joe', last_name: 'Joe')
+# => SELECT * FROM users WHERE first_name = 'Joe' OR last_name = 'Joe'
+```
+
+
+You can separate sets of hash condition by explicitly group them as hashes :
+
+```ruby
+User.where.any_of({first_name: 'John', last_name: 'Joe'}, {first_name: 'Simon', last_name: 'Joe'})
+# => SELECT * FROM users WHERE ( first_name = 'John' AND last_name = 'Joe' ) OR ( first_name = 'Simon' AND last_name = 'Joe' )
+```
+
+
+Each `#any_of` set is the same kind you would have passed to #where :
+
+```ruby
+Client.where.any_of("orders_count = '2'", ["name = ?", 'Joe'], {email: 'joe@example.com'})
+```
+
+
+You can as well pass `#any_of` to other relations :
+
+```ruby
+Client.where("orders_count = '2'").any_of({ email: 'joe@example.com' }, { email: 'john@example.com' })
+```
+
+
+And with associations :
+
+```ruby
+User.find(1).posts.any_of({published: false}, "user_id IS NULL")
+```
+
+
+The best part is that `#any_of` accepts other relations as parameter, to help compute
+dynamic `OR` queries :
+
+```ruby
+banned_users = User.where(banned: true)
+unconfirmed_users = User.where("confirmed_at IS NULL")
+inactive_users = User.any_of(banned_users, unconfirmed_users)
+```
+
+### `#none_of`
 
 `#none_of` is the negative version of `#any_of`. This will return all active users :
 
@@ -98,43 +152,6 @@ conditions are grouped through `OR` and which are grouped through `AND` :
 ## I want this in active_record
 
 You can [say it there](https://github.com/rails/rails/pull/10891).
-
-
-## Troubleshooting
-
-### `Any_of` produces an AND query rather than an OR
-
-A few people has been tricked by omitted curly bracket hash style for
-parameters. Each condition group passed to `#any_of` should be a Hash.
-
-If you do something like this :
-
-```ruby
-MyModel.where.any_of(foo: 'a', bar: 'b')
-```
-
-You actually do the same as this :
-
-```ruby
-MyModel.where.any_of({foo: 'a', bar: 'b'})
-```
-
-And there is a single hash there, so a single condition. This will produce :
-
-```
-SELECT * from my_models where foo = 'a' AND bar = 'b'
-```
-
-To have several conditions, you have to explicitly use curly brackets :
-
-```ruby
-MyModel.where.any_of({foo: 'a'}, {bar: 'b'})
-# SELECT * from my_models where foo = 'a' OR bar = 'b'
-```
-
-In next version, `#any_of` will do the work for you and simply split a single
-hash param into as many hashes as there are keys, so there won't be any
-surprise anymore.
 
 
 ## Running test
