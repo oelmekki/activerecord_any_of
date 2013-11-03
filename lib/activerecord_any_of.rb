@@ -22,12 +22,12 @@ module ActiverecordAnyOf
     #
     # You can as well pass #any_of to other relations :
     #
-    #    Client.where("orders_count = '2'").any_of({ email: 'joe@example.com' }, { email: 'john@example.com' })
+    #    Client.where("orders_count = '2'").where.any_of({ email: 'joe@example.com' }, { email: 'john@example.com' })
     #
     #
     # And with associations :
     #
-    #    User.find(1).posts.any_of({published: false}, "user_id IS NULL")
+    #    User.find(1).posts.where.any_of({published: false}, "user_id IS NULL")
     #
     #
     # The best part is that #any_of accepts other relations as parameter, to help compute
@@ -35,7 +35,7 @@ module ActiverecordAnyOf
     #
     #    banned_users = User.where(banned: true)
     #    unconfirmed_users = User.where("confirmed_at IS NULL")
-    #    inactive_users = User.any_of(banned_users, unconfirmed_users)
+    #    inactive_users = User.where.any_of(banned_users, unconfirmed_users)
     def any_of(*queries)
       raise ArgumentError, 'Called any_of() with no arguments.' if queries.none?
       AlternativeBuilder.new(:positive, @scope, *queries).build
@@ -48,7 +48,7 @@ module ActiverecordAnyOf
     #
     #    banned_users = User.where(banned: true)
     #    unconfirmed_users = User.where("confirmed_at IS NULL")
-    #    active_users = User.none_of(banned_users, unconfirmed_users)
+    #    active_users = User.where.none_of(banned_users, unconfirmed_users)
     def none_of(*queries)
       raise ArgumentError, 'Called none_of() with no arguments.' if queries.none?
       AlternativeBuilder.new(:negative, @scope, *queries).build

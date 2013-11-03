@@ -78,14 +78,14 @@ Client.where.any_of("orders_count = '2'", ["name = ?", 'Joe'], {email: 'joe@exam
 You can as well pass `#any_of` to other relations :
 
 ```ruby
-Client.where("orders_count = '2'").any_of({ email: 'joe@example.com' }, { email: 'john@example.com' })
+Client.where("orders_count = '2'").where.any_of({ email: 'joe@example.com' }, { email: 'john@example.com' })
 ```
 
 
 And with associations :
 
 ```ruby
-User.find(1).posts.any_of({published: false}, "user_id IS NULL")
+User.find(1).posts.where.any_of({published: false}, "user_id IS NULL")
 ```
 
 
@@ -95,7 +95,7 @@ dynamic `OR` queries :
 ```ruby
 banned_users = User.where(banned: true)
 unconfirmed_users = User.where("confirmed_at IS NULL")
-inactive_users = User.any_of(banned_users, unconfirmed_users)
+inactive_users = User.where.any_of(banned_users, unconfirmed_users)
 ```
 
 ### `#none_of`
