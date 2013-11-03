@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    activerecord_any_of (1.1)
+    activerecord_any_of (1.2)
       rails (>= 3.2.13, < 5)
 
 GEM
@@ -86,7 +86,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    tzinfo (0.3.37)
+    tzinfo (0.3.38)
 
 PLATFORMS
   ruby
