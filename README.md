@@ -158,8 +158,8 @@ offline = '1' )` ? This can quickly get messy and counter intuitive.
 The MongoId solution is quite elegant. Using `#any_of`, it is made clear which
 conditions are grouped through `OR` and which are grouped through `AND` : 
 
-* `User.where( "email LIKE '%@example.com" ).any_of({ active: true }, { offline: true })`
-* `fakes = User.where( "email LIKE '%@example.com'" ).where( active: true ); User.any_of( fakes, { offline: true })` 
+* `User.where( "email LIKE '%@example.com" ).where.any_of({ active: true }, { offline: true })`
+* `fakes = User.where( "email LIKE '%@example.com'" ).where( active: true ); User.where.any_of( fakes, { offline: true })` 
 
 
 ## I want this in active_record
