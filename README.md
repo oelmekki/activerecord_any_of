@@ -201,6 +201,19 @@ cd ../..
 RAILS_VERSION=3 bundle exec rake test
 ```
 
+### Running tests with rails-4 / postgres
+
+If you want to use postgres, create a database and pass credentials as
+environment variables :
+
+```shell
+bundle install --gemfile Gemfile.rails3
+cd test/dummy_rails3
+DB_ADAPTER=postgresql DB_DATABASE=<db> DB_USERNAME=<user> DB_PASSWORD=<pass> RAILS_ENV=test BUNDLE_GEMFILE=../../Gemfile.rails3 bundle exec rake db:migrate
+
+DB_ADAPTER=postgresql DB_DATABASE=<db> DB_USERNAME=<user> DB_PASSWORD=<pass> bundle exec rake test
+```
+
 
 ## Pull requests
 

@@ -46,6 +46,7 @@ GEM
     mime-types (1.25)
     minitest (4.7.5)
     multi_json (1.7.9)
+    pg (0.17.0)
     polyglot (0.3.3)
     rack (1.5.2)
     rack-test (0.6.2)
@@ -89,5 +90,6 @@ PLATFORMS
 DEPENDENCIES
   activerecord_any_of!
   jquery-rails
+  pg
   rails (~> 4)
   sqlite3
