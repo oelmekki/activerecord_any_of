@@ -1,0 +1,28 @@
+language: ruby
+script:
+  - bundle exec rake test
+before_script:
+  - mysql -e 'create database activerecord_any_of_test;'
+  - psql -c 'create database activerecord_any_of_test;' -U postgres
+before_install:
+  - gem install bundler # use the latest bundler, since Travis doesn't update for us
+rvm:
+  - 1.9.3
+  - 2.0.0
+  - 2.1.1
+  - rbx
+  - jruby-19mode
+env:
+  - DB=mysql
+  - DB=sqlite3
+  - DB=sqlite3mem
+  - DB=postgresql
+gemfile:
+  - gemfiles/rails3.gemfile
+  - gemfiles/rails4.gemfile
+  - gemfiles/rails_edge.gemfile
+matrix:
+  allow_failures:
+    - gemfile: gemfiles/rails_edge.gemfile
+    - env: DB=postgresql
+    - env: DB=mysql

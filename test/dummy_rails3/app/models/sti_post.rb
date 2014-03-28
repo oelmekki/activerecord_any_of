@@ -1,2 +1,0 @@
-class StiPost < Post
-end

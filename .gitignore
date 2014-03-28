@@ -1,7 +1,5 @@
 .bundle/
 log/*.log
 pkg/
-test/dummy_rails?/db/*.sqlite3
-test/dummy_rails?/log/*.log
-test/dummy_rails?/tmp/
-test/dummy_rails?/.sass-cache
+Gemfile.lock
+gemfiles/*.gemfile.lock

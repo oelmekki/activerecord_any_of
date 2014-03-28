@@ -101,7 +101,11 @@ class ActiverecordAnyOfTest < ActiveSupport::TestCase
   end
 
   test 'calling #any_of with a single Hash as parameter expands it' do
-    assert_equal ['David', 'Mary'], Author.where.any_of(name: 'David', id: 2).map(&:name)
+    if Rails.version >= '4'
+      assert_equal ['David', 'Mary'], Author.where.any_of(name: 'David', id: 2).map(&:name)
+    else
+      assert_equal ['David', 'Mary'], Author.any_of(name: 'David', id: 2).map(&:name)
+    end
   end
 
   if Rails.version >= '4'
