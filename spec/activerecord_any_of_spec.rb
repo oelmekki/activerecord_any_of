@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe ActiverecordAnyOf do
-  fixtures :authors, :posts
+  fixtures :authors, :posts, :users
 
   describe 'finding with alternate conditions' do
     let(:davids) { Author.where(name: "David") }
@@ -56,6 +56,20 @@ describe ActiverecordAnyOf do
       expect(david.posts.where.any_of(welcome, {type: 'SpecialPost'}).map(&:title)).to match_array(expected)
     else
       expect(david.posts.any_of(welcome, {type: 'SpecialPost'}).map(&:title)).to match_array(expected)
+    end
+  end
+
+  it 'finds with combined polymorphic associations' do
+    company = Company.create!
+    university = University.create!
+
+    company.users << users(:ezra)
+    university.users << users(:aria)
+
+    if ActiveRecord::VERSION::MAJOR >= 4
+      expect(User.where.any_of(company.users, university.users)).to match_array([users(:ezra), users(:aria)])
+    else
+      expect(User.any_of(company.users, university.users)).to match_array([users(:ezra), users(:aria)])
     end
   end
 
