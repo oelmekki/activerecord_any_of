@@ -46,7 +46,7 @@ describe ActiverecordAnyOf do
       if Rails.version >= '4'
         expect(Author.where.not(name: 'Mary').where.any_of(davids, ['name = ?', 'Mary'])).to match_array([david])
       else
-        expect(Author.where("name IS NOT 'Mary'").any_of(davids, ['name = ?', 'Mary'])).to match_array([david])
+        expect(Author.where("name != 'Mary'").any_of(davids, ['name = ?', 'Mary'])).to match_array([david])
       end
     end
   end
