@@ -4,49 +4,45 @@ describe ActiverecordAnyOf do
   fixtures :authors, :posts
 
   describe 'finding with alternate conditions' do
-    let(:david) { authors(:david) }
-    let(:mary) { authors(:mary) }
-    let(:bob) { authors(:bob) }
-
     let(:davids) { Author.where(name: "David") }
 
     it "matches hash combinations" do
       if Rails.version >= '4'
-        expect(Author.where.any_of({name: 'David'}, {name: 'Mary'})).to match_array([david, mary])
+        expect(Author.where.any_of({name: 'David'}, {name: 'Mary'})).to match_array(authors(:david, :mary))
       else
-        expect(Author.any_of({name: 'David'}, {name: 'Mary'})).to match_array([david, mary])
+        expect(Author.any_of({name: 'David'}, {name: 'Mary'})).to match_array(authors(:david, :mary))
       end
     end
 
     it "matches combination of hash and array" do
       if Rails.version >= '4'
-        expect(Author.where.any_of({name: 'David'}, ['name = ?', 'Mary'])).to match_array([david, mary])
+        expect(Author.where.any_of({name: 'David'}, ['name = ?', 'Mary'])).to match_array(authors(:david, :mary))
       else
-        expect(Author.any_of({name: 'David'}, ['name = ?', 'Mary'])).to match_array([david, mary])
+        expect(Author.any_of({name: 'David'}, ['name = ?', 'Mary'])).to match_array(authors(:david, :mary))
       end
     end
 
     it "matches a combination of hashes, arrays, and AR relations" do
       if Rails.version >= '4'
-        expect(Author.where.any_of(davids, ['name = ?', 'Mary'], {name: 'Bob'})).to match_array([david, mary, bob])
+        expect(Author.where.any_of(davids, ['name = ?', 'Mary'], {name: 'Bob'})).to match_array(authors(:david, :mary, :bob))
       else
-        expect(Author.any_of(davids, ['name = ?', 'Mary'], {name: 'Bob'})).to match_array([david, mary, bob])
+        expect(Author.any_of(davids, ['name = ?', 'Mary'], {name: 'Bob'})).to match_array(authors(:david, :mary, :bob))
       end
     end
 
     it "matches a combination of strings, hashes, and AR relations" do
       if Rails.version >= '4'
-        expect(Author.where.any_of(davids, "name = 'Mary'", {name: 'Bob', id: 3})).to match_array([david, mary, bob])
+        expect(Author.where.any_of(davids, "name = 'Mary'", {name: 'Bob', id: 3})).to match_array(authors(:david, :mary, :bob))
       else
-        expect(Author.any_of(davids, "name = 'Mary'", {name: 'Bob', id: 3})).to match_array([david, mary, bob])
+        expect(Author.any_of(davids, "name = 'Mary'", {name: 'Bob', id: 3})).to match_array(authors(:david, :mary, :bob))
       end
     end
 
     it "doesn't find combinations previously filtered out" do
       if Rails.version >= '4'
-        expect(Author.where.not(name: 'Mary').where.any_of(davids, ['name = ?', 'Mary'])).to match_array([david])
+        expect(Author.where.not(name: 'Mary').where.any_of(davids, ['name = ?', 'Mary'])).to match_array([authors(:david)])
       else
-        expect(Author.where("name != 'Mary'").any_of(davids, ['name = ?', 'Mary'])).to match_array([david])
+        expect(Author.where("name != 'Mary'").any_of(davids, ['name = ?', 'Mary'])).to match_array([authors(:david)])
       end
     end
   end
@@ -69,9 +65,9 @@ describe ActiverecordAnyOf do
       mary = Author.where(posts: { title: "eager loading with OR'd conditions" }).joins(:posts)
 
       if Rails.version >= '4'
-        expect(Author.where.any_of(david, mary)).to match_array([authors(:david), authors(:mary)])
+        expect(Author.where.any_of(david, mary)).to match_array(authors(:david, :mary))
       else
-        expect(Author.any_of(david, mary)).to match_array([authors(:david), authors(:mary)])
+        expect(Author.any_of(david, mary)).to match_array(authors(:david, :mary))
       end
     end
 
@@ -79,11 +75,11 @@ describe ActiverecordAnyOf do
       if Rails.version >= '4'
         david = Author.where(posts: { title: 'Welcome to the weblog' }).includes(:posts).references(:posts)
         mary = Author.where(posts: { title: "eager loading with OR'd conditions" }).includes(:posts).references(:posts)
-        expect(Author.where.any_of(david, mary)).to match_array([authors(:david), authors(:mary)])
+        expect(Author.where.any_of(david, mary)).to match_array(authors(:david, :mary))
       else
         david = Author.where(posts: { title: 'Welcome to the weblog' }).includes(:posts)
         mary = Author.where(posts: { title: "eager loading with OR'd conditions" }).includes(:posts)
-        expect(Author.any_of(david, mary)).to match_array([authors(:david), authors(:mary)])
+        expect(Author.any_of(david, mary)).to match_array(authors(:david, :mary))
       end
     end
   end
@@ -134,9 +130,9 @@ describe ActiverecordAnyOf do
 
   it 'calling #any_of with a single Hash as parameter expands it' do
     if Rails.version >= '4'
-      expect(Author.where.any_of(name: 'David', id: 2)).to match_array([authors(:david), authors(:mary)])
+      expect(Author.where.any_of(name: 'David', id: 2)).to match_array(authors(:david, :mary))
     else
-      expect(Author.any_of(name: 'David', id: 2)).to match_array([authors(:david), authors(:mary)])
+      expect(Author.any_of(name: 'David', id: 2)).to match_array(authors(:david, :mary))
     end
   end
 
