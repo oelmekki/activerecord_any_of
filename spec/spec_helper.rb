@@ -1,0 +1,36 @@
+plugin_test_dir = File.dirname(__FILE__)
+
+require 'rubygems'
+require 'bundler/setup'
+require 'pry'
+
+require 'logger'
+require 'rails/all'
+require 'active_record'
+ActiveRecord::Base.logger = Logger.new(plugin_test_dir + "/debug.log")
+
+require 'yaml'
+require 'erb'
+ActiveRecord::Base.configurations = YAML::load(ERB.new(IO.read(plugin_test_dir + "/db/database.yml")).result)
+ActiveRecord::Base.establish_connection((ENV["DB"] ||= 'sqlite3mem').to_sym)
+ActiveRecord::Migration.verbose = false
+
+require 'combustion/database'
+Combustion::Database.create_database(ActiveRecord::Base.configurations[ENV["DB"]])
+load(File.join(plugin_test_dir, "db", "schema.rb"))
+
+require 'activerecord_any_of'
+require 'support/models'
+
+require 'action_controller'
+require 'rspec/rails'
+require 'database_cleaner'
+RSpec.configure do |config|
+  config.fixture_path = "#{plugin_test_dir}/fixtures"
+  config.use_transactional_fixtures = true
+  config.after(:suite) do
+    unless /sqlite/ === ENV['DB']
+      Combustion::Database.drop_database(ActiveRecord::Base.configurations[ENV['DB']])
+    end
+  end
+end

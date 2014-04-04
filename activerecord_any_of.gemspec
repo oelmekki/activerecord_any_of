@@ -15,10 +15,11 @@ Gem::Specification.new do |s|
   s.license     = 'MIT'
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
-  s.test_files = Dir["test/**/*"]
+  s.test_files = Dir["spec/**/*"]
 
   s.add_dependency "rails", ">= 3.2.13", '< 5'
 
+  s.add_development_dependency 'rspec-rails', '~> 2.12'
   s.add_development_dependency 'rake', '~> 10'
   s.add_development_dependency 'combustion', '>= 0.5.1'
   s.add_development_dependency 'database_cleaner'
