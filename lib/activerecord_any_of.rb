@@ -57,7 +57,7 @@ module ActiverecordAnyOf
 
   module Deprecated
     def any_of(*queries)
-      if Rails.version >= '4'
+      if ActiveRecord::VERSION::MAJOR >= 4
         ActiveSupport::Deprecation.warn( "Calling #any_of directly is deprecated and will be removed in activerecord_any_of-1.2.\nPlease call it with #where : User.where.any_of(cond1, cond2)." )
       end
 
@@ -66,7 +66,7 @@ module ActiverecordAnyOf
     end
 
     def none_of(*queries)
-      if Rails.version >= '4'
+      if ActiveRecord::VERSION::MAJOR >= 4
         ActiveSupport::Deprecation.warn( "Calling #none_of directly is deprecated and will be removed in activerecord_any_of-1.2.\nPlease call it with #where : User.where.none_of(cond1, cond2)." )
       end
 
@@ -76,7 +76,7 @@ module ActiverecordAnyOf
   end
 end
 
-if Rails.version >= '4'
+if ActiveRecord::VERSION::MAJOR >= 4
   module ActiverecordAnyOfDelegation
     delegate :any_of, to: :all
     delegate :none_of, to: :all
@@ -89,5 +89,5 @@ else
 end
 
 ActiveRecord::Relation.send(:include, ActiverecordAnyOf::Deprecated)
-ActiveRecord::Relation::WhereChain.send(:include, ActiverecordAnyOf::Chained) if Rails.version >= '4'
+ActiveRecord::Relation::WhereChain.send(:include, ActiverecordAnyOf::Chained) if ActiveRecord::VERSION::MAJOR >= 4
 ActiveRecord::Base.send(:extend, ActiverecordAnyOfDelegation)
