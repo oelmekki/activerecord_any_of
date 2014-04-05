@@ -73,6 +73,16 @@ describe ActiverecordAnyOf do
     end
   end
 
+  it 'finds alternatives with combined has_many associations' do
+    david, mary, bob = authors(:david, :mary, :bob)
+
+    if ActiveRecord::VERSION::MAJOR >= 4
+      expect(Post.where.any_of(david.posts, mary.posts)).to match_array(david.posts + mary.posts + bob.posts)
+    else
+      expect(Post.any_of(david.posts, mary.posts)).to match_array(david.posts + mary.posts + bob.posts)
+    end
+  end
+
   describe 'finding alternate dynamically with joined queries' do
     it "matches combined AR relations with joins" do
       david = Author.where(posts: { title: 'Welcome to the weblog' }).joins(:posts)
