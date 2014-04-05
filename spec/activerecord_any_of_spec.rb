@@ -74,12 +74,22 @@ describe ActiverecordAnyOf do
   end
 
   it 'finds alternatives with combined has_many associations' do
+    david, mary = authors(:david, :mary)
+
+    if ActiveRecord::VERSION::MAJOR >= 4
+      expect(Post.where.any_of(david.posts, mary.posts)).to match_array(david.posts + mary.posts)
+    else
+      expect(Post.any_of(david.posts, mary.posts)).to match_array(david.posts + mary.posts)
+    end
+  end
+
+  it 'finds alternatives with more than 2 combined has_many associations' do
     david, mary, bob = authors(:david, :mary, :bob)
 
     if ActiveRecord::VERSION::MAJOR >= 4
-      expect(Post.where.any_of(david.posts, mary.posts)).to match_array(david.posts + mary.posts + bob.posts)
+      expect(Post.where.any_of(david.posts, mary.posts, bob.posts)).to match_array(david.posts + mary.posts + bob.posts)
     else
-      expect(Post.any_of(david.posts, mary.posts)).to match_array(david.posts + mary.posts + bob.posts)
+      expect(Post.any_of(david.posts, mary.posts, bob.posts)).to match_array(david.posts + mary.posts + bob.posts)
     end
   end
 
