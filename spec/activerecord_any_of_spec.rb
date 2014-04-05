@@ -67,9 +67,25 @@ describe ActiverecordAnyOf do
     university.users << users(:aria)
 
     if ActiveRecord::VERSION::MAJOR >= 4
-      expect(User.where.any_of(company.users, university.users)).to match_array([users(:ezra), users(:aria)])
+      expect(User.where.any_of(company.users, university.users)).to match_array(users(:ezra, :aria))
     else
-      expect(User.any_of(company.users, university.users)).to match_array([users(:ezra), users(:aria)])
+      expect(User.any_of(company.users, university.users)).to match_array(users(:ezra, :aria))
+    end
+  end
+
+  it 'finds with more than 2 combined polymorphic associations' do
+    company = Company.create!
+    university = University.create!
+    company2 = Company.create!
+
+    company.users << users(:ezra)
+    university.users << users(:aria)
+    company2.users << users(:james)
+
+    if ActiveRecord::VERSION::MAJOR >= 4
+      expect(User.where.any_of(company.users, university.users, company2.users)).to match_array(users(:ezra, :aria, :james))
+    else
+      expect(User.any_of(company.users, university.users, company2.users)).to match_array(users(:ezra, :aria, :james))
     end
   end
 
