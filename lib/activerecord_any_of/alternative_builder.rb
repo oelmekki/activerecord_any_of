@@ -71,7 +71,7 @@ module ActiverecordAnyOf
 
         def with_statement_cache
           if queries && queries_bind_values.any?
-            relation = where([queries.reduce(:or).to_sql, *queries_bind_values.map { |v| v[1] }])
+            relation = where([queries.reduce(:or).to_sql.gsub(/\=\ \$\d/, "= ?"), *queries_bind_values.map { |v| v[1] }])
           else
             relation = where(queries.reduce(:or).to_sql)
           end
