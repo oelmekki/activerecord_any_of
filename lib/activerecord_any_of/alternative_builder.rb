@@ -37,7 +37,7 @@ module ActiverecordAnyOf
             self.queries_bind_values += query.bind_values if query.bind_values.any?
             queries_joins_values[:includes].concat(query.includes_values) if query.includes_values.any?
             queries_joins_values[:joins].concat(query.joins_values) if query.joins_values.any?
-            queries_joins_values[:references].concat(query.references_values) if Rails.version >= '4' && query.references_values.any?
+            queries_joins_values[:references].concat(query.references_values) if ActiveRecord::VERSION::MAJOR >= 4 && query.references_values.any?
             query.arel.constraints.reduce(:and)
           end
         end
@@ -51,7 +51,7 @@ module ActiverecordAnyOf
         end
 
         def add_joins_to(relation)
-          relation = relation.references(uniq_queries_joins_values[:references]) if Rails.version >= '4'
+          relation = relation.references(uniq_queries_joins_values[:references]) if ActiveRecord::VERSION::MAJOR >= 4
           relation = relation.includes(uniq_queries_joins_values[:includes])
           relation.joins(uniq_queries_joins_values[:joins])
         end
@@ -60,7 +60,7 @@ module ActiverecordAnyOf
           relation.bind_values += queries_bind_values
           relation.includes_values += uniq_queries_joins_values[:includes]
           relation.joins_values += uniq_queries_joins_values[:joins]
-          relation.references_values += uniq_queries_joins_values[:references] if Rails.version >= '4'
+          relation.references_values += uniq_queries_joins_values[:references] if ActiveRecord::VERSION::MAJOR >= 4
 
           relation
         end
@@ -89,7 +89,7 @@ module ActiverecordAnyOf
       private
 
         def with_statement_cache
-          if Rails.version >= '4'
+          if ActiveRecord::VERSION::MAJOR >= 4
             if queries && queries_bind_values.any?
               relation = where.not([queries.reduce(:or).to_sql, *queries_bind_values.map { |v| v[1] }])
             else
@@ -107,7 +107,7 @@ module ActiverecordAnyOf
         end
 
         def without_statement_cache
-          if Rails.version >= '4'
+          if ActiveRecord::VERSION::MAJOR >= 4
             relation = where.not(queries.reduce(:or))
           else
             relation = where(Arel::Nodes::Not.new(queries.reduce(:or)))

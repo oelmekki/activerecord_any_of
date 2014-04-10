@@ -1,0 +1,5 @@
+MYSQL2_VERSION = ">= 0.3"
+
+eval File.read(File.expand_path("../../Gemfile", __FILE__))
+
+gem "rails", "~> 4.0.0"

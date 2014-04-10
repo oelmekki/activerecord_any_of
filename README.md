@@ -17,7 +17,7 @@ expected result, this should have been used :
 User.where.any_of({name: 'Doe'}, {active: true})
 ```
 
-  
+
 To be true to principle of least surprise, we now automatically expand
 parameters consisting of a single Hash as a hash for each key, so first
 query will indeed generate :
@@ -156,64 +156,18 @@ OR offline = '1'` ? Or `where email LIKE '%@example.com' AND ( active = '1' OR
 offline = '1' )` ? This can quickly get messy and counter intuitive.
 
 The MongoId solution is quite elegant. Using `#any_of`, it is made clear which
-conditions are grouped through `OR` and which are grouped through `AND` : 
+conditions are grouped through `OR` and which are grouped through `AND` :
 
 * `User.where( "email LIKE '%@example.com" ).where.any_of({ active: true }, { offline: true })`
-* `fakes = User.where( "email LIKE '%@example.com'" ).where( active: true ); User.where.any_of( fakes, { offline: true })` 
-
+* `fakes = User.where( "email LIKE '%@example.com'" ).where( active: true ); User.where.any_of( fakes, { offline: true })`
 
 ## I want this in active_record
 
 You can [say it there](https://github.com/rails/rails/pull/10891).
 
-
 ## Running test
 
-Activerecord_any_of allows to run tests against both rails-3 and rails-4. You
-have to run them seperately, but it's ok to use the same directory / machine to
-run both.
-
-### Running tests with rails-4
-
-```shell
-# One time setup
-bundle install --gemfile Gemfile.rails4
-cd test/dummy_rails4
-BUNDLE_GEMFILE=../../Gemfile.rails4 bundle exec rake db:migrate
-BUNDLE_GEMFILE=../../Gemfile.rails4 bundle exec rake db:test:prepare
-cd ../..
-
-# Then
-bundle exec rake test
-```
-
-### Running tests with rails-3
-
-```shell
-# One time setup
-bundle install --gemfile Gemfile.rails3
-cd test/dummy_rails3
-BUNDLE_GEMFILE=../../Gemfile.rails3 bundle exec rake db:migrate
-BUNDLE_GEMFILE=../../Gemfile.rails3 bundle exec rake db:test:prepare
-cd ../..
-
-# Then
-RAILS_VERSION=3 bundle exec rake test
-```
-
-### Running tests with rails-4 / postgres
-
-If you want to use postgres, create a database and pass credentials as
-environment variables :
-
-```shell
-bundle install --gemfile Gemfile.rails3
-cd test/dummy_rails3
-DB_ADAPTER=postgresql DB_DATABASE=<db> DB_USERNAME=<user> DB_PASSWORD=<pass> RAILS_ENV=test BUNDLE_GEMFILE=../../Gemfile.rails3 bundle exec rake db:migrate
-
-DB_ADAPTER=postgresql DB_DATABASE=<db> DB_USERNAME=<user> DB_PASSWORD=<pass> bundle exec rake test
-```
-
+Testing is done using TravisCI. You can use the wonderful [wwtd gem](https://github.com/grosser/wwtd) to run all tests locally. By default, the task to run is `bundle exec rake spec`, and will run against `sqlite3` in memory. You can change the database like so: `DB=postgresql bundle exec rake spec`. Please note that you may need to change the credentials for your database in the `database.yml` file. *Do not commit those changes.*
 
 ## Pull requests
 

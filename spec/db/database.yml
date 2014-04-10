@@ -1,0 +1,28 @@
+sqlite3:
+  adapter: <%= "jdbc" if defined? JRUBY_VERSION %>sqlite3
+  database: activerecord_any_of.sqlite3.db
+sqlite3mem:
+  adapter: <%= "jdbc" if defined? JRUBY_VERSION %>sqlite3
+  database: ":memory:"
+postgresql:
+  adapter: postgresql
+  encoding: unicode
+  database: activerecord_any_of_test
+  pool: 5
+  username: postgres
+  password:
+  min_messages: warning
+mysql:
+  adapter: <%= defined?(JRUBY_VERSION) ? "jdbcmysql" : "mysql2" %>
+  host: localhost
+  username: root
+  password:
+  database: activerecord_any_of_test
+  encoding: utf8
+## Add DB Configuration to run Oracle tests
+oracle:
+  adapter: oracle_enhanced
+  host: localhost
+  username: activerecord_any_of_dev
+  password:
+  database: xe

@@ -1,18 +1,17 @@
 #!/usr/bin/env rake
+$LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 
-rails_version = ENV[ 'RAILS_VERSION' ] || '4'
+require 'rubygems'
+require 'bundler/setup'
+require 'activerecord_any_of/version'
 
-if rails_version == '3'
-  ENV[ 'BUNDLE_GEMFILE' ] = 'Gemfile.rails3'
-else
-  ENV[ 'BUNDLE_GEMFILE' ] = 'Gemfile.rails4'
+task :default => :spec
+
+task :spec do
+  puts "\n" + (cmd = "bundle exec rspec spec")
+  system cmd
 end
 
-begin
-  require 'bundler/setup'
-rescue LoadError
-  puts 'You must `gem install bundler` and `bundle install` to run rake tasks'
-end
 begin
   require 'rdoc/task'
 rescue LoadError
@@ -28,20 +27,3 @@ RDoc::Task.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include('README.rdoc')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
-
-
-
-
-Bundler::GemHelper.install_tasks
-
-require 'rake/testtask'
-
-Rake::TestTask.new(:test) do |t|
-  t.libs << 'lib'
-  t.libs << 'test'
-  t.pattern = 'test/**/*_test.rb'
-  t.verbose = false
-end
-
-
-task :default => :test
