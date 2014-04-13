@@ -64,6 +64,12 @@ module ActiverecordAnyOf
 
           relation
         end
+
+        def unprepare_query(query)
+          query.gsub(/((?<!\\)'.*?(?<!\\)'|(?<!\\)".*?(?<!\\)")|(\=\ \$\d)/) do |match|
+            $2 and $2.gsub(/\=\ \$\d/, "= ?") or match
+          end
+        end
     end
 
     class PositiveBuilder < Builder
@@ -71,7 +77,7 @@ module ActiverecordAnyOf
 
         def with_statement_cache
           if queries && queries_bind_values.any?
-            relation = where([queries.reduce(:or).to_sql, *queries_bind_values.map { |v| v[1] }])
+            relation = where([unprepare_query(queries.reduce(:or).to_sql), *queries_bind_values.map { |v| v[1] }])
           else
             relation = where(queries.reduce(:or).to_sql)
           end
@@ -91,13 +97,13 @@ module ActiverecordAnyOf
         def with_statement_cache
           if ActiveRecord::VERSION::MAJOR >= 4
             if queries && queries_bind_values.any?
-              relation = where.not([queries.reduce(:or).to_sql, *queries_bind_values.map { |v| v[1] }])
+              relation = where.not([unprepare_query(queries.reduce(:or).to_sql), *queries_bind_values.map { |v| v[1] }])
             else
               relation = where.not(queries.reduce(:or).to_sql)
             end
           else
             if queries && queries_bind_values.any?
-              relation = where([Arel::Nodes::Not.new(queries.reduce(:or)).to_sql, *queries_bind_values.map { |v| v[1] }])
+              relation = where([unprepare_query(Arel::Nodes::Not.new(queries.reduce(:or)).to_sql), *queries_bind_values.map { |v| v[1] }])
             else
               relation = where(Arel::Nodes::Not.new(queries.reduce(:or)).to_sql)
             end
