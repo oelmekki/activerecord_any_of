@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe ActiverecordAnyOf do
-  fixtures :authors, :posts
+  fixtures :authors, :posts, :users
 
   describe 'finding with alternate conditions' do
     let(:davids) { Author.where(name: "David") }
@@ -56,6 +56,56 @@ describe ActiverecordAnyOf do
       expect(david.posts.where.any_of(welcome, {type: 'SpecialPost'}).map(&:title)).to match_array(expected)
     else
       expect(david.posts.any_of(welcome, {type: 'SpecialPost'}).map(&:title)).to match_array(expected)
+    end
+  end
+
+  it 'finds with combined polymorphic associations' do
+    company = Company.create!
+    university = University.create!
+
+    company.users << users(:ezra)
+    university.users << users(:aria)
+
+    if ActiveRecord::VERSION::MAJOR >= 4
+      expect(User.where.any_of(company.users, university.users)).to match_array(users(:ezra, :aria))
+    else
+      expect(User.any_of(company.users, university.users)).to match_array(users(:ezra, :aria))
+    end
+  end
+
+  it 'finds with more than 2 combined polymorphic associations' do
+    company = Company.create!
+    university = University.create!
+    company2 = Company.create!
+
+    company.users << users(:ezra)
+    university.users << users(:aria)
+    company2.users << users(:james)
+
+    if ActiveRecord::VERSION::MAJOR >= 4
+      expect(User.where.any_of(company.users, university.users, company2.users)).to match_array(users(:ezra, :aria, :james))
+    else
+      expect(User.any_of(company.users, university.users, company2.users)).to match_array(users(:ezra, :aria, :james))
+    end
+  end
+
+  it 'finds alternatives with combined has_many associations' do
+    david, mary = authors(:david, :mary)
+
+    if ActiveRecord::VERSION::MAJOR >= 4
+      expect(Post.where.any_of(david.posts, mary.posts)).to match_array(david.posts + mary.posts)
+    else
+      expect(Post.any_of(david.posts, mary.posts)).to match_array(david.posts + mary.posts)
+    end
+  end
+
+  it 'finds alternatives with more than 2 combined has_many associations' do
+    david, mary, bob = authors(:david, :mary, :bob)
+
+    if ActiveRecord::VERSION::MAJOR >= 4
+      expect(Post.where.any_of(david.posts, mary.posts, bob.posts)).to match_array(david.posts + mary.posts + bob.posts)
+    else
+      expect(Post.any_of(david.posts, mary.posts, bob.posts)).to match_array(david.posts + mary.posts + bob.posts)
     end
   end
 

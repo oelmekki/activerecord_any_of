@@ -13,4 +13,21 @@ ActiveRecord::Schema.define do
     t.datetime :created_at
     t.datetime :updated_at
   end
+
+  create_table :companies do |t|
+    t.string :name
+  end
+
+  create_table :universities do |t|
+    t.string :name
+  end
+
+  create_table :memberships do |t|
+    t.references :organization, polymorphic: true
+    t.references :user
+  end
+
+  create_table :users do |t|
+    t.string  :name
+  end
 end
