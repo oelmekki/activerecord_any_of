@@ -43,7 +43,17 @@ module ActiverecordAnyOf
         end
 
         def uniq_queries_joins_values
-          @uniq_queries_joins_values ||= queries_joins_values.each { |tables| tables.uniq }
+          @uniq_queries_joins_values ||= begin
+            { includes: [], joins: [], references: [] }.tap do |values|
+              queries_joins_values.each do |join_type, statements|
+                if Symbol === statements.first or String === statements.first
+                  values[ join_type ] = statements.uniq
+                else
+                  values[ join_type ] = statements.uniq( &:to_sql )
+                end
+              end
+            end
+          end
         end
 
         def method_missing(method_name, *args, &block)
