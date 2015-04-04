@@ -161,9 +161,6 @@ conditions are grouped through `OR` and which are grouped through `AND` :
 * `User.where( "email LIKE '%@example.com" ).where.any_of({ active: true }, { offline: true })`
 * `fakes = User.where( "email LIKE '%@example.com'" ).where( active: true ); User.where.any_of( fakes, { offline: true })`
 
-## I want this in active_record
-
-You can [say it there](https://github.com/rails/rails/pull/10891).
 
 ## Running test
 
