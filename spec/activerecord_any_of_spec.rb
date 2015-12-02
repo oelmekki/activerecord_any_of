@@ -186,6 +186,33 @@ describe ActiverecordAnyOf do
     end
   end
 
+  it "does not fail on hudge number for bind values" do
+    conditions = [
+      { name: 'Mary' },
+      { name: 'David' },
+      { name: 'David1' },
+      { name: 'David2' },
+      { name: 'David3' },
+      { name: 'David4' },
+      { name: 'David5' },
+      { name: 'David6' },
+      { name: 'David7' },
+      { name: 'David8' },
+      { name: 'David9' },
+      { name: 'David10' },
+      { name: 'David11' },
+      { name: 'David12' },
+      { name: 'David13' },
+      { name: 'David14' }
+    ]
+
+    if ActiveRecord::VERSION::MAJOR >= 4
+      expect(Author.where.any_of(*conditions)).to match_array(authors(:david, :mary))
+    else
+      expect(Author.any_of(*conditions)).to match_array(authors(:david, :mary))
+    end
+  end
+
   if ActiveRecord::VERSION::MAJOR >= 4
     it 'calling directly #any_of is deprecated in rails-4' do
       allow(ActiveSupport::Deprecation).to receive(:warn)
