@@ -46,10 +46,10 @@ module ActiverecordAnyOf
           @uniq_queries_joins_values ||= begin
             { includes: [], joins: [], references: [] }.tap do |values|
               queries_joins_values.each do |join_type, statements|
-                if Symbol === statements.first or String === statements.first
-                  values[ join_type ] = statements.uniq
-                else
+                if statements.first.respond_to?(:to_sql)
                   values[ join_type ] = statements.uniq( &:to_sql )
+                else
+                  values[ join_type ] = statements.uniq
                 end
               end
             end

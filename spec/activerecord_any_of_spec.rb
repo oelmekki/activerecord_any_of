@@ -170,6 +170,16 @@ describe ActiverecordAnyOf do
     end
   end
 
+  it 'calling #any_of after including via a hash does not raise an exception' do
+    if ActiveRecord::VERSION::MAJOR >= 4
+      expect { User.includes(memberships: :companies).where.any_of(user_id: 1, company_id: 1) }.
+        to_not raise_exception
+    else
+      expect { User.includes(memberships: :companies).any_of(user_id: 1, company_id: 1) }.
+        to_not raise_exception
+    end
+  end
+
   it 'calling #any_of after a wildcard query works' do
     if ActiveRecord::VERSION::MAJOR >= 4
       expect(Author.where("name like '%av%'").where.any_of({name: 'David'}, {name: 'Mary'})).to match_array([authors(:david)])
