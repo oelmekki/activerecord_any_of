@@ -154,7 +154,7 @@ describe ActiverecordAnyOf do
     end
   end
 
-  it 'calling #any_of with no argument raise exception' do
+  it 'calling #any_of with no argument raises exception' do
     if ActiveRecord::VERSION::MAJOR >= 4
       expect { Author.where.any_of }.to raise_exception(ArgumentError)
     else
@@ -162,7 +162,7 @@ describe ActiverecordAnyOf do
     end
   end
 
-  it 'calling #none_of with no argument raise exception' do
+  it 'calling #none_of with no argument raises exception' do
     if ActiveRecord::VERSION::MAJOR >= 4
       expect { Author.where.none_of }.to raise_exception(ArgumentError)
     else
