@@ -76,8 +76,8 @@ module ActiverecordAnyOf
         end
 
         def unprepare_query(query)
-          query.gsub(/((?<!\\)'.*?(?<!\\)'|(?<!\\)".*?(?<!\\)")|(\=\ \$\d)/) do |match|
-            $2 and $2.gsub(/\=\ \$\d/, "= ?") or match
+          query.gsub(/((?<!\\)'.*?(?<!\\)'|(?<!\\)".*?(?<!\\)")|(\=\ \$\d+)/) do |match|
+            $2 and $2.gsub(/\=\ \$\d+/, "= ?") or match
           end
         end
     end
