@@ -38,6 +38,7 @@ module ActiverecordAnyOf
             queries_joins_values[:includes].concat(query.includes_values) if query.includes_values.any?
             queries_joins_values[:joins].concat(query.joins_values) if query.joins_values.any?
             queries_joins_values[:references].concat(query.references_values) if ActiveRecord::VERSION::MAJOR >= 4 && query.references_values.any?
+            query = query.where( query.to_sql.present? ? "1=1" : "0=1" ) if query.arel.constraints.empty?
             query.arel.constraints.reduce(:and)
           end
         end

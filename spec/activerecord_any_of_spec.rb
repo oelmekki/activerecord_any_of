@@ -154,6 +154,30 @@ describe ActiverecordAnyOf do
     end
   end
 
+  describe 'calling #any_of with #all' do
+    it 'returns all records of relation' do
+      davids = Author.where(name: 'David')
+      david, mary, bob = authors(:david, :mary, :bob)
+
+      if ActiveRecord::VERSION::MAJOR >= 4
+        expect(Author.where.any_of(Author.all, davids)).to match_array([david, mary, bob])
+      else
+        expect(Author.any_of(Author.all, davids)).to match_array([david, mary, bob])
+      end
+    end
+  end
+
+  describe 'calling #any_of with #none' do
+    it 'does not consider #none' do
+      davids = Author.where(name: 'David')
+
+      # none was implemented in rails 4
+      if ActiveRecord::VERSION::MAJOR >= 4
+        expect(Author.where.any_of(Author.none, davids)).to match_array(davids)
+      end
+    end
+  end
+
   it 'calling #any_of with no argument raise exception' do
     if ActiveRecord::VERSION::MAJOR >= 4
       expect { Author.where.any_of }.to raise_exception(ArgumentError)
