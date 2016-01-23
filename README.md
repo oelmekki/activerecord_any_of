@@ -1,41 +1,5 @@
 # ActiverecordAnyOf
 
-## A note for < 1.2 users
-
-There was a lot of confusion about explit/implicit hash parameter notation,
-with people expecting this to generate an OR query :
-
-```ruby
-User.where.any_of(name: 'Doe', active: true)
-```
-
-This wouldn't work, since there is only one parameter, here : `{name: 'Doe', active: true}`,
-so there's a single group of condition that is joined as a AND. To achieve
-expected result, this should have been used :
-
-```ruby
-User.where.any_of({name: 'Doe'}, {active: true})
-```
-
-
-To be true to principle of least surprise, we now automatically expand
-parameters consisting of a single Hash as a hash for each key, so first
-query will indeed generate :
-
-```ruby
-User.where.any_of(name: 'Doe', active: true)
-# => SELECT * FROM users WHERE name = 'Doe' OR active = '1'
-```
-
-
-Grouping conditions can still be achieved using explicit curly brackets :
-
-```ruby
-User.where.any_of({first_name: 'John', last_name: 'Doe'}, active: true)
-# => SELECT * FROM users WHERE (first_name = 'John' AND last_name = 'Doe') OR active = '1'
-```
-
-
 ## Introduction
 
 This gem provides `#any_of` and `#none_of` on ActiveRecord.
