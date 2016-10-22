@@ -1,5 +1,15 @@
 # ActiverecordAnyOf
 
+
+## Hey, want to take over?
+
+These days, I write less and less ruby and more and more golang. I will
+continue to maintain this project, because there are people using it (don't
+worry, I won't let you down!).
+
+That being said I would love if someone could take over. Please let me know in
+[that issue](https://github.com/oelmekki/activerecord_any_of/issues/38) if you're interested.
+
 ## Introduction
 
 This gem provides `#any_of` and `#none_of` on ActiveRecord.
