@@ -34,11 +34,22 @@ module ActiverecordAnyOf
               query = where(*query)
             end
 
-            self.queries_bind_values += query.bind_values if query.bind_values.any?
+            if ( bound = bind_values_for( query ) ).any?
+              self.queries_bind_values += bound
+            end
+
             queries_joins_values[:includes].concat(query.includes_values) if query.includes_values.any?
             queries_joins_values[:joins].concat(query.joins_values) if query.joins_values.any?
             queries_joins_values[:references].concat(query.references_values) if ActiveRecord::VERSION::MAJOR >= 4 && query.references_values.any?
             query.arel.constraints.reduce(:and)
+          end
+        end
+
+        def bind_values_for( query )
+          if ActiveRecord::VERSION::MAJOR >= 5
+            query.bound_attributes.map { |attr| [ attr.name, attr.value ] }
+          else
+            query.bind_values
           end
         end
 
