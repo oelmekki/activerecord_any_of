@@ -47,7 +47,7 @@ module ActiverecordAnyOf
 
         def bind_values_for( query )
           if ActiveRecord::VERSION::MAJOR >= 5
-            query.bound_attributes.map { |attr| [ attr.name, attr.value ] }
+            query.where_values_hash.to_a
           else
             query.bind_values
           end
