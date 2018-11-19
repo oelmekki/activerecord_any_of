@@ -1,14 +1,11 @@
 # ActiverecordAnyOf
 
 
-## Hey, want to take over?
+## Feel free to fork
 
-These days, I write less and less ruby and more and more golang. I will
-continue to maintain this project, because there are people using it (don't
-worry, I won't let you down!).
+It's been a while since I haven't updated this project. I'm not considering it dead since it's still working,
+but if you want new features within it, don't hesitate to fork it and ping me, I'll mention your fork here.
 
-That being said I would love if someone could take over. Please let me know in
-[that issue](https://github.com/oelmekki/activerecord_any_of/issues/38) if you're interested.
 
 ## Introduction
 
