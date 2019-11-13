@@ -1,4 +1,4 @@
-MYSQL2_VERSION = ">= 0.3"
+MYSQL2_VERSION = ">= 0.4"
 
 eval File.read(File.expand_path("../../Gemfile", __FILE__))
 
