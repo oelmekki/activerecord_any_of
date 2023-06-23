@@ -1,12 +1,5 @@
 # ActiverecordAnyOf
 
-
-## Feel free to fork
-
-It's been a while since I haven't updated this project. I'm not considering it dead since it's still working,
-but if you want new features within it, don't hesitate to fork it and ping me, I'll mention your fork here.
-
-
 ## Introduction
 
 This gem provides `#any_of` and `#none_of` on ActiveRecord.
