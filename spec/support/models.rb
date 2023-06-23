@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Author < ActiveRecord::Base
   has_many :posts
 end
@@ -14,8 +16,8 @@ end
 
 class User < ActiveRecord::Base
   has_many :memberships
-  has_many :companies, through: :memberships, source: :organization, source_type: "Company"
-  has_many :universities, through: :memberships, source: :organization, source_type: "University"
+  has_many :companies, through: :memberships, source: :organization, source_type: 'Company'
+  has_many :universities, through: :memberships, source: :organization, source_type: 'University'
 end
 
 class Membership < ActiveRecord::Base

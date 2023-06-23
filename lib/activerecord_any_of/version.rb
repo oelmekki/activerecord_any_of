@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiverecordAnyOf
-  VERSION = "1.4"
+  VERSION = '2.0'
 end
