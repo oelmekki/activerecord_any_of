@@ -1,5 +1,10 @@
 # ActiverecordAnyOf
 
+> Warning! Development of activerecord_any_of is now happening on
+> [Gitlab](https://gitlab.com/oelmekki/activerecord_any_of).
+>
+> Please go there for issues and merge requests.
+
 ## Introduction
 
 This gem provides `#any_of` and `#none_of` on ActiveRecord.
