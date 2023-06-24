@@ -9,7 +9,7 @@
 
 This gem provides `#any_of` and `#none_of` on ActiveRecord.
 
-`#any_of` is inspired by [any_of from mongoid](http://two.mongoid.org/docs/querying/criteria.html#any_of).
+`#any_of` is inspired by [any_of from mongoid](https://www.mongodb.com/docs/mongoid/current/reference/queries/#any-of-behavior).
 
 It was released before `#or` was implemented in ActiveRecord. Its main purpose was to both :
 
