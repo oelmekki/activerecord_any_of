@@ -6,7 +6,7 @@ gemspec path: File.expand_path(__dir__)
 
 gem 'database_cleaner'
 gem 'pry'
-gem 'rake'
+gem 'rake', '>= 12.3.3'
 gem 'rspec-rails'
 gem 'rubocop'
 gem 'rubocop-rake'
