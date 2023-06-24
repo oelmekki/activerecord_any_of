@@ -1,32 +1,15 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
-gemspec :path => File.expand_path('../', __FILE__)
+gemspec path: File.expand_path(__dir__)
 
-gem 'combustion', :github => 'pat/combustion', :branch => 'master'
-
-platforms :jruby do
-  gem 'activerecord-jdbcsqlite3-adapter', '>= 1.3.0.beta2'
-  gem 'activerecord-jdbcmysql-adapter', '>= 1.3.0.beta2'
-  gem 'jdbc-mysql'
-  gem 'activerecord-jdbcpostgresql-adapter', '>= 1.3.0.beta2'
-  gem 'jruby-openssl'
-end
-
-platforms :ruby do
-  gem 'sqlite3'
-  gem 'mysql2', (MYSQL2_VERSION if defined? MYSQL2_VERSION)
-  gem 'pg'
-end
-
-platforms :rbx do
-  gem 'rubysl', '~> 2.0'
-  gem 'rubysl-test-unit'
-end
-
-# Add Oracle Adapters
-# gem 'ruby-oci8'
-# gem 'activerecord-oracle_enhanced-adapter'
-
-# Debuggers
+gem 'database_cleaner'
 gem 'pry'
-gem 'pry-nav'
+gem 'rake'
+gem 'rspec-rails'
+gem 'rubocop'
+gem 'rubocop-rake'
+gem 'rubocop-rspec'
+gem 'simplecov'
+gem 'sqlite3'

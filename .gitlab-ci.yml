@@ -1,0 +1,22 @@
+image: "ruby:latest"
+
+stages:
+  - test
+
+before_script:
+  - gem install bundler
+  - bundle install
+
+rspec:
+  stage: test
+  script:
+    - bundle exec rspec
+  artifacts:
+    when: on_failure
+    paths:
+      - coverage
+
+rubocop:
+  stage: test
+  script:
+    - bundle exec rubocop

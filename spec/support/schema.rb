@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ActiveRecord::Schema.define do
   create_table :authors do |t|
     t.string   :name
@@ -28,6 +30,6 @@ ActiveRecord::Schema.define do
   end
 
   create_table :users do |t|
-    t.string  :name
+    t.string :name
   end
 end

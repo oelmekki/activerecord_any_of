@@ -1,5 +1,6 @@
 .bundle/
-log/*.log
 pkg/
 Gemfile.lock
 gemfiles/*.gemfile.lock
+spec/debug.log
+coverage/
