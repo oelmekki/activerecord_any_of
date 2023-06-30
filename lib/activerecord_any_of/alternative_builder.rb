@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module ActiverecordAnyOf
+  IS_RAILS_6 = ActiveRecord.version.to_s.between?('6', '7')
+
   # Main class allowing to build alternative conditions for the query.
   class AlternativeBuilder
     def initialize(match_type, context, *queries)
@@ -110,13 +112,19 @@ module ActiverecordAnyOf
           ::Regexp.last_match(2)&.gsub(/=\ \$\d+/, '= ?') or match
         end
       end
+
+      def bind_values
+        queries_bind_values.tap do |values|
+          values.map!(&:value) if IS_RAILS_6
+        end
+      end
     end
 
     # Returns records that match any of the conditions, ie `#any_of`.
     class PositiveBuilder < Builder
       def build
         relation = if queries && queries_bind_values.any?
-                     where([unprepare_query(queries.reduce(:or).to_sql), *queries_bind_values])
+                     where([unprepare_query(queries.reduce(:or).to_sql), *bind_values])
                    else
                      where(queries.reduce(:or).to_sql)
                    end
@@ -129,7 +137,7 @@ module ActiverecordAnyOf
     class NegativeBuilder < Builder
       def build
         relation = if queries && queries_bind_values.any?
-                     where.not([unprepare_query(queries.reduce(:or).to_sql), *queries_bind_values])
+                     where.not([unprepare_query(queries.reduce(:or).to_sql), *bind_values])
                    else
                      where.not(queries.reduce(:or).to_sql)
                    end
