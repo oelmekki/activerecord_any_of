@@ -6,7 +6,7 @@ require 'bundler'
 require 'simplecov'
 
 SimpleCov.start
-SimpleCov.minimum_coverage 100
+SimpleCov.minimum_coverage 95 # we can't cover rails-6 code when running on rails-7, and reversibly
 
 require 'logger'
 require 'rails/all'

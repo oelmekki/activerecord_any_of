@@ -3,14 +3,21 @@ image: "ruby:latest"
 stages:
   - test
 
-before_script:
-  - gem install bundler
-  - bundle install
-
 rspec:
   stage: test
   script:
+    - bundle install
     - bundle exec rspec
+  artifacts:
+    when: on_failure
+    paths:
+      - coverage
+
+rails6_rspec:
+  stage: test
+  script:
+    - ANY_OF_RAILS_6=true bundle install
+    - ANY_OF_RAILS_6=true bundle exec rspec
   artifacts:
     when: on_failure
     paths:
@@ -19,4 +26,5 @@ rspec:
 rubocop:
   stage: test
   script:
+    - bundle install
     - bundle exec rubocop
