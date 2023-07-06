@@ -80,15 +80,26 @@ module ActiverecordAnyOf
         end
       end
 
+      def values_for(query)
+        return unless query.respond_to?(:right)
+
+        if query.right.is_a?(Array)
+          values = query.right
+          values.map!(&:value) unless IS_RAILS_6
+          values
+        else
+          return unless query.right.respond_to?(:value)
+
+          query.right.value
+        end
+      end
+
       def queries_bind_values
         queries.map do |query|
           if query.respond_to?(:children)
-            map_multiple_bind_values(query)
+            query.children.map { |c| values_for(c) }
           else
-            next unless query.respond_to?(:right)
-            next unless query.right.respond_to?(:value)
-
-            query.right.value
+            values_for(query)
           end
         end.flatten.compact
       end
