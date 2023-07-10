@@ -141,6 +141,12 @@ describe 'ActiverecordAnyOf' do
     end
   end
 
+  describe 'using an IN() clause' do
+    it 'recognize the bind values' do
+      expect(Author.where.any_of(name: %w[David Mary])).to match_array(authors(:david, :mary))
+    end
+  end
+
   describe 'using a huge number of bind values' do
     it 'does not crash' do
       conditions = [{ name: 'Mary' }, { name: 'David' }]
