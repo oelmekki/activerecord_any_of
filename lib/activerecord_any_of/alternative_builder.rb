@@ -134,7 +134,7 @@ module ActiverecordAnyOf
     # Returns records that match any of the conditions, ie `#any_of`.
     class PositiveBuilder < Builder
       def build
-        relation = if queries && queries_bind_values.any?
+        relation = if queries && queries_bind_values.size > 0
                      where([unprepare_query(queries.reduce(:or).to_sql), *bind_values])
                    else
                      where(queries.reduce(:or).to_sql)
@@ -147,7 +147,7 @@ module ActiverecordAnyOf
     # Returns records that match none of the conditions, ie `#none_of`.
     class NegativeBuilder < Builder
       def build
-        relation = if queries && queries_bind_values.any?
+        relation = if queries && queries_bind_values.size > 0
                      where.not([unprepare_query(queries.reduce(:or).to_sql), *bind_values])
                    else
                      where.not(queries.reduce(:or).to_sql)
